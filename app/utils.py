@@ -1,47 +1,17 @@
-# arquivo para guardar as funções que eu vou utilizar no projeto.
-# estamos fazendo isso para o projeto main.py ficar mais limpo e fácil de entender.
-
-import json
 import logging
-import pandas as pd
-from numpy.f2py.auxfuncs import throw_error
 from selenium.common import TimeoutException, NoSuchElementException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from app.constantes import arquivo_json, arquivo_excel, tempo_maximo_espera_por_elemento, tentativas_maximas
-
-# imports adicionais para criar o navegador (webdriver) de forma reutilizável
+from app.constantes import tempo_maximo_espera_por_elemento, tentativas_maximas
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.microsoft import EdgeChromiumDriverManager
 from webdriver_manager.firefox import GeckoDriverManager
-
 from app.exceptions import SeleniumError
-
 from time import sleep
 
-
-# Função para salvar os dados coletados pelo robô em JSON.
-def salvar_como_json(lista_de_dados):
-    try:
-        with open(arquivo_json, "w", encoding="utf-8") as f:
-            json.dump(lista_de_dados, f, ensure_ascii=False, indent=4)
-        logging.info(f"Arquivo JSON salvo com sucesso em: {arquivo_json}")
-    except Exception as erro:
-        logging.error(f"Erro ao salvar o arquivo JSON: {erro}")
-
-# Função para criar uma planilha no Excel com os dados que o JSON armazenou.
-def salvar_como_excel(lista_de_dados):
-    try:
-        df = pd.DataFrame(lista_de_dados)
-        df.to_excel(arquivo_excel, index=False)
-        logging.info(f"Planilha Excel criada com sucesso em: {arquivo_excel}")
-    except Exception as erro:
-        logging.error(f"Erro ao salvar a planilha Excel: {erro}")
-
-
-def get_elemento(driver, by, seletor):
+def get_elemento(driver, by, seletor, tempo=None):
     """
     Aguarda até que um elemento esteja presente no DOM e o retorna.
 
@@ -66,12 +36,14 @@ def get_elemento(driver, by, seletor):
           não garante que ele esteja visível ou clicável.
     """
     try:
+        tempo_espera = tempo if tempo is not None else tempo_maximo_espera_por_elemento
+
         logging.debug(
             f"Iniciando busca do elemento com seletor '{seletor}' "
-            f"usando método '{by}' (timeout={tempo_maximo_espera_por_elemento}s)."
+            f"usando método '{by}' (timeout={tempo_espera}s)."
         )
 
-        elemento = WebDriverWait(driver, tempo_maximo_espera_por_elemento).until(
+        elemento = WebDriverWait(driver, tempo_espera).until(
             EC.presence_of_element_located((by, seletor))
         )
 
@@ -79,7 +51,7 @@ def get_elemento(driver, by, seletor):
         return elemento
 
     except TimeoutException:
-        logging.error(f"Timeout: elemento '{seletor}' não encontrado em {tempo_maximo_espera_por_elemento}s usando '{by}'.")
+        logging.error(f"Timeout: elemento '{seletor}' não encontrado em {tempo_espera}s usando '{by}'.")
         raise SeleniumError(f"Timeout ao localizar o elemento '{seletor}' via '{by}'.")
 
     except NoSuchElementException:
@@ -89,6 +61,7 @@ def get_elemento(driver, by, seletor):
     except Exception as ex:
         logging.error(f"Erro inesperado ao buscar o elemento '{seletor}' via '{by}': {ex}")
         raise SeleniumError(f"Erro ao buscar o elemento '{seletor}' via '{by}': {ex}")
+
 
 
 def scroll_to_element(card, driver):
@@ -122,8 +95,6 @@ def scroll_to_element(card, driver):
         raise SeleniumError(f"Erro ao aguardar o elemento '{card}': {ex}")
 
 
-# Função para criar e retornar um driver de navegador pronto para uso.
-# Ela tenta os navegadores na ordem de preferência informada e respeita
 def criar_driver(preferencias=None, tempo_download_driver=30):
     """
     Cria um WebDriver de acordo com a lista de preferencias.
@@ -137,7 +108,6 @@ def criar_driver(preferencias=None, tempo_download_driver=30):
     try:
         from app.constantes import mostrar_tela_navegador
     except Exception:
-        # Se a variável não existir, assumimos False (não mostrar)
         mostrar_tela_navegador = False
         logging.warning("Variável mostrar_tela_navegador não encontrada em app.constantes. Usando False como padrão.")
 
@@ -216,7 +186,7 @@ def criar_driver(preferencias=None, tempo_download_driver=30):
                 logging.info(f"{navegador.capitalize()} iniciado com sucesso.")
                 try:
                     driver.get("https://www.google.com/maps")
-                    driver.maximize_window()  # 👈 garante que o navegador abra em tela cheia
+                    driver.maximize_window()  # garante que o navegador abra em tela cheia
                     logging.info("Google Maps aberto com sucesso e janela maximizada.")
                 except Exception as e:
                     logging.warning(f"Falha ao abrir o Google Maps automaticamente: {e}")

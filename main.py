@@ -1,6 +1,3 @@
-# main.py
-# modo de teste: executa apenas a coleta de academias
-
 from app.logs import configurar_logs
 from app.constantes import arquivo_log
 from domain.use_case import buscar_informacoes
@@ -14,11 +11,11 @@ def main():
     tipo = "academias"
     buscar_informacoes(tipo)
 
-    # tipo = "sorveterias"
-    # buscar_informacoes(tipo)
-    #
-    # tipo = "restaurantes"
-    # buscar_informacoes(tipo)
+    tipo = "sorveterias"
+    buscar_informacoes(tipo)
+    
+    tipo = "restaurantes"
+    buscar_informacoes(tipo)
 
     logging.info("Automação finalizada.")
 

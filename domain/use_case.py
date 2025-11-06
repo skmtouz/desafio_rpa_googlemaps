@@ -1,12 +1,10 @@
 from typing import List
-
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-import logging
-
-from app.constantes import quantidade_maxima_por_tipo, tentativas_maximas
-from infra.file_provider import gerar_arquivo_json
+from app.constantes import quantidade_maxima_por_tipo, tentativas_maximas, nome_do_estabelecimento, tipo_do_estabelecimento, nota_do_estabelecimento, avaliacoes_do_estabelecimento, endereco_do_estabelecimento
+from infra.file_provider import gerar_arquivo_json, gerar_arquivo_excel
 from app.utils import get_elemento, scroll_to_element, abrir_navegador, navegar_para_url, fechar_navegador
+import logging
 
 def buscar_informacoes(estabelecimento):
     """
@@ -61,24 +59,18 @@ def buscar_informacoes(estabelecimento):
             return
 
         gerar_arquivo_json(estabelecimento.lower(), resultados)
+        gerar_arquivo_excel(estabelecimento.lower())
+        
 
-        # TODO: melhorar essa documentação dessa classe
-
-        #TODO: gerar o arquivo Excel no file provider
+        #TODO: melhorar essa documentação dessa classe
 
         #TODO: criar uma pasta de arquivos
 
-        #TODO: conferir as variáveis que podem ser constants
-
         #TODO: conferir as documentações e logs (se são uteis, se precisa adicionar e o nível do LOG)
-
-        #TODO: conferir se precisa dos comentários mesmo
-
-        #TODO: ESTUDAR OS PORQUES DAS DEFINIÇÕES
 
         #TODO: fazer o Readme
 
-        #TODO: ver se utilizamos pyhtonPackge ou pastas (eu acho melhor pythonPackage, pastas seria para os arquivos)
+        #TODO: ver se utilizamos pythonPackge ou pastas (eu acho melhor pythonPackage, pastas seria para os arquivos)
 
     except Exception as erro:
         logging.critical(f"Erro inesperado: {erro}")
@@ -129,24 +121,34 @@ def extrair_dados_do_card_de_estabelecimento(driver, indice):
     logging.debug(f"Iniciando extração dos dados do estabelecimento com índice #{indice}.")
 
     logging.debug(f"recuperando nome do estabelecimento com indice: #{indice}.")
-    nome = get_elemento(driver, By.XPATH,
-                        '//*[@id="QA0Szd"]/div/div/div[1]/div[3]/div/div[1]/div/div/div[2]/div[2]/div/div[1]/div[1]/h1').text.strip()
+    nome = get_elemento(driver, By.XPATH, nome_do_estabelecimento).text.strip()
 
     logging.debug(f"recuperando tipo do estabelecimento com indice: #{indice}.")
-    tipo = get_elemento(driver, By.XPATH,
-                        '//*[@id="QA0Szd"]/div/div/div[1]/div[3]/div/div[1]/div/div/div[2]/div[2]/div/div[1]/div[2]/div/div[2]/span[1]/span/button').text.strip()
+    tipo = get_elemento(driver, By.XPATH, tipo_do_estabelecimento).text.strip()
 
     logging.debug(f"recuperando nota do estabelecimento com indice: #{indice}.")
-    nota = get_elemento(driver, By.XPATH,
-                        '//*[@id="QA0Szd"]/div/div/div[1]/div[3]/div/div[1]/div/div/div[2]/div[2]/div/div[1]/div[2]/div/div[1]/div[2]/span[1]/span[1]').text.strip()
+    nota = get_elemento(driver, By.XPATH, nota_do_estabelecimento).text.strip()
 
     logging.debug(f"recuperando avaliações do estabelecimento com indice: #{indice}.")
-    avaliacoes = get_elemento(driver, By.XPATH,
-                              '//*[@id="QA0Szd"]/div/div/div[1]/div[3]/div/div[1]/div/div/div[2]/div[2]/div/div[1]/div[2]/div/div[1]/div[2]/span[2]/span/span').text.strip()
+    avaliacoes = get_elemento(driver, By.XPATH, avaliacoes_do_estabelecimento).text.strip()
 
     logging.debug(f"recuperando endereço do estabelecimento com indice: #{indice}.")
-    endereco = get_elemento(driver, By.XPATH,
-                            '//*[@id="QA0Szd"]/div/div/div[1]/div[3]/div/div[1]/div/div/div[2]/div[7]/div[3]/button/div/div[2]/div[1]').text.strip()
+    endereco = ""
+    for xpath in endereco_do_estabelecimento:
+        try:
+            elemento = get_elemento(driver, By.XPATH, xpath, tempo=1)
+            endereco = elemento.text.strip()
+
+            if endereco:
+                logging.debug(f"Endereço encontrado com XPath alternativo: {xpath}")
+                break
+
+        except Exception as e:
+            logging.debug(f"Tentativa falhou com XPath '{xpath}': {e}")
+            continue
+
+    if not endereco:
+        logging.error(f"Nenhum endereço encontrado para o card #{indice}.")
 
     logging.debug(f"Extração concluída com sucesso para o card #{indice}: {nome} ({tipo}).")
 
