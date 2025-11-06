@@ -1,4 +1,5 @@
 import logging
+import os
 from app.constantes import nome_arquivo_de_log, caminho_arquivos
 
 class ColorFormatter(logging.Formatter):
@@ -45,10 +46,12 @@ def configurar_logs():
         - Um manipulador de console (StreamHandler) com cores por nível.
         - Nível mínimo DEBUG para capturar todos os eventos relevantes.
     """
+    os.makedirs(caminho_arquivos, exist_ok=True)
+
     formato = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 
     # Arquivo (sem cor)
-    file_handler = logging.FileHandler(caminho_arquivos + nome_arquivo_de_log)
+    file_handler = logging.FileHandler(caminho_arquivos + nome_arquivo_de_log, encoding='utf-8')
     file_handler.setLevel(logging.DEBUG)
     file_handler.setFormatter(formato)
 
