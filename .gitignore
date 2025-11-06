@@ -1,0 +1,16 @@
+.vscode
+
+__pychache__/
+
+*.json
+
+*.log
+
+.venv/
+
+venv/
+
+pycache/
+
+*.py[cod]
+*$py.class
