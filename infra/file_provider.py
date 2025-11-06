@@ -5,7 +5,7 @@ import pandas as pd
 from openpyxl.utils import get_column_letter
 from openpyxl.styles import Font, PatternFill, Alignment
 from openpyxl import load_workbook
-from app.constantes import arquivo_json, arquivo_excel
+from app.constantes import caminho_arquivos, caminho_arquivos
 from app.exceptions import ArquivoError
 
 def gerar_arquivo_json(nome_arquivo: str, json_conteudo: list):
@@ -21,7 +21,7 @@ def gerar_arquivo_json(nome_arquivo: str, json_conteudo: list):
         ArquivoError: Caso ocorra erro ao gerar o arquivo.
     """
     nome_arquivo_completo = f"{nome_arquivo}.json"
-    caminho_arquivo = os.path.join(os.path.dirname(arquivo_json), nome_arquivo_completo)
+    caminho_arquivo = os.path.join(os.path.dirname(caminho_arquivos), nome_arquivo_completo)
 
     logging.debug(f"Iniciando geração do arquivo JSON: {nome_arquivo_completo}")
     logging.debug(f"Caminho completo: {caminho_arquivo}")
@@ -31,7 +31,7 @@ def gerar_arquivo_json(nome_arquivo: str, json_conteudo: list):
             json.dump(json_conteudo, arquivo, ensure_ascii=False, indent=4)
 
         logging.info(
-            f"Arquivo '{nome_arquivo_completo}' salvo com sucesso em '{os.path.dirname(arquivo_json)}' "
+            f"Arquivo '{nome_arquivo_completo}' salvo com sucesso em '{os.path.dirname(caminho_arquivos)}' "
             f"({len(json_conteudo)} registros)."
         )
     except Exception as e:
@@ -57,11 +57,11 @@ def gerar_arquivo_excel(nome_arquivo: str, caminho_json: str = None):
     try:
         caminho_origem = (
             caminho_json
-            or os.path.join(os.path.dirname(arquivo_json), f"{nome_arquivo}.json")
+            or os.path.join(os.path.dirname(caminho_arquivos), f"{nome_arquivo}.json")
         )
 
         nome_excel_completo = f"{nome_arquivo}.xlsx"
-        caminho_excel = os.path.join(os.path.dirname(arquivo_excel), nome_excel_completo)
+        caminho_excel = os.path.join(os.path.dirname(caminho_arquivos), nome_excel_completo)
 
         logging.debug(f"Iniciando geração da planilha Excel: {nome_excel_completo}")
         logging.debug(f"Origem dos dados (JSON): {caminho_origem}")
@@ -128,7 +128,7 @@ def gerar_arquivo_excel(nome_arquivo: str, caminho_json: str = None):
         wb.close()
 
         logging.info(
-            f"Planilha '{nome_excel_completo}' criada com sucesso em '{os.path.dirname(arquivo_excel)}' "
+            f"Planilha '{nome_excel_completo}' criada com sucesso em '{os.path.dirname(caminho_arquivos)}' "
             f"({len(df)} registros)."
         )
 

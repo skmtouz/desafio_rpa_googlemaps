@@ -1,0 +1,8 @@
+# ===== Dependências principais =====
+selenium==4.25.0             # Automação do navegador
+webdriver-manager==4.0.2     # Gerencia automaticamente o driver do navegador
+pandas==2.2.3                # Manipulação de dados e estruturação para Excel
+openpyxl==3.1.5              # Criação e formatação de planilhas Excel
+
+# ===== Dependências auxiliares =====
+python-dotenv==1.0.1         # (Opcional) Facilita configuração de variáveis de ambiente

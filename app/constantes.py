@@ -17,19 +17,16 @@ Atenção:
     - O uso centralizado garante consistência entre diferentes módulos (utils, use_case, logs, etc).
 
 Constantes principais:
-    estabelecimento (list[str]):
+    estabelecimentos (list[str]):
         Lista de tipos de locais que o robô pesquisará no Google Maps.
 
-    arquivo_json (str):
-        Caminho base do arquivo JSON onde os resultados coletados serão armazenados.
+    caminho_arquivos (str):
+        Caminho base de onde os arquivos gerados serão armazenados.
 
-    arquivo_excel (str):
-        Caminho do arquivo Excel gerado a partir dos resultados em JSON.
+    nome_arquivo_de_log (str):
+        Nome do arquivo de log responsável por registrar todas as etapas da execução.
 
-    arquivo_log (str):
-        Caminho do arquivo de log responsável por registrar todas as etapas da execução.
-
-    quantidade_maxima_por_tipo (int):
+    quantidade_de_resultados (int):
         Define o número máximo de estabelecimentos coletados por categoria de busca.
 
     mostrar_tela_navegador (bool):
@@ -42,6 +39,9 @@ Constantes principais:
 
     tentativas_maximas (int):
         Número de tentativas de repetição para inicializar o navegador ou executar ações críticas.
+
+    preferencia_de_navegadores (list[str]):
+        Lista de navegadores para execucação do RPA.
 
 Seletores XPath:
     Todos os seletores abaixo são utilizados pelo módulo `use_case.py` para identificar
@@ -61,26 +61,31 @@ Seletores XPath:
     avaliacoes_do_estabelecimento (str):
         XPath que retorna o número de avaliações registradas pelos usuários.
 
-    endereco_do_estabelecimento (str):
-        XPath dinâmico para localizar o botão com o atributo `aria-label="Copiar endereço"`,
-        garantindo maior estabilidade em diferentes tipos de painel (academias, restaurantes, etc).
+    endereco_do_estabelecimento (list[str]):
+        Lista de XPaths alternativos usados para capturar o endereço completo do estabelecimento
+        no painel lateral do Google Maps.
+
+        Essa abordagem garante maior compatibilidade entre diferentes layouts de painéis —
+        como academias, restaurantes e sorveterias — que podem renderizar o endereço em posições
+        distintas dentro do DOM. O robô tentará localizar o endereço utilizando os caminhos
+        fornecidos, em ordem de prioridade, até encontrar o elemento válido.
 """
 
-estabelecimento = ["academias", "restaurantes", "sorveterias"]
+estabelecimentos = ["academias", "restaurantes", "sorveterias"]
 
-arquivo_json = "resultados.json"
+caminho_arquivos = "arquivos_gerados/"
 
-arquivo_excel = "resultados.xlsx"
+nome_arquivo_de_log = "automação.log"
 
-arquivo_log = "automação.log"
-
-quantidade_maxima_por_tipo = 10
+quantidade_de_resultados = 5
 
 mostrar_tela_navegador = True
 
 tempo_maximo_espera_por_elemento = 10
 
 tentativas_maximas = 3
+
+preferencia_de_navegadores = ['chrome', 'edge', 'firefox']
 
 # ----------------------------
 # Caminhos (XPath) dos elementos

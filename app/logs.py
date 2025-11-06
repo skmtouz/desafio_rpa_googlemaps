@@ -1,4 +1,5 @@
 import logging
+from app.constantes import nome_arquivo_de_log, caminho_arquivos
 
 class ColorFormatter(logging.Formatter):
     """
@@ -35,12 +36,9 @@ class ColorFormatter(logging.Formatter):
         record.msg = original_msg
         return formatted
 
-def configurar_logs(nome_do_arquivo_log: str):
+def configurar_logs():
     """
     Configura o sistema de logs para registrar mensagens em arquivo e no console com cores equilibradas.
-
-    Args:
-        nome_do_arquivo_log (str): Caminho do arquivo de log a ser utilizado.
 
     Esta função define:
         - Um manipulador de arquivo (FileHandler) para salvar logs (sem cores).
@@ -50,7 +48,7 @@ def configurar_logs(nome_do_arquivo_log: str):
     formato = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 
     # Arquivo (sem cor)
-    file_handler = logging.FileHandler(nome_do_arquivo_log)
+    file_handler = logging.FileHandler(caminho_arquivos + nome_arquivo_de_log)
     file_handler.setLevel(logging.DEBUG)
     file_handler.setFormatter(formato)
 

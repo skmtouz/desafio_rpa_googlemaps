@@ -2,7 +2,7 @@ import logging
 from selenium.common import TimeoutException, NoSuchElementException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from app.constantes import tempo_maximo_espera_por_elemento, tentativas_maximas
+from app.constantes import tempo_maximo_espera_por_elemento, tentativas_maximas, preferencia_de_navegadores, mostrar_tela_navegador
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
@@ -11,7 +11,7 @@ from webdriver_manager.firefox import GeckoDriverManager
 from app.exceptions import SeleniumError
 from time import sleep
 
-def get_elemento(driver, by, seletor, tempo=None):
+def get_elemento(driver, by, seletor, tempo=tempo_maximo_espera_por_elemento):
     """
     Aguarda até que um elemento esteja presente no DOM e o retorna.
 
@@ -36,14 +36,12 @@ def get_elemento(driver, by, seletor, tempo=None):
           não garante que ele esteja visível ou clicável.
     """
     try:
-        tempo_espera = tempo if tempo is not None else tempo_maximo_espera_por_elemento
-
         logging.debug(
             f"Iniciando busca do elemento com seletor '{seletor}' "
-            f"usando método '{by}' (timeout={tempo_espera}s)."
+            f"usando método '{by}' (timeout={tempo}s)."
         )
 
-        elemento = WebDriverWait(driver, tempo_espera).until(
+        elemento = WebDriverWait(driver, tempo).until(
             EC.presence_of_element_located((by, seletor))
         )
 
@@ -51,7 +49,7 @@ def get_elemento(driver, by, seletor, tempo=None):
         return elemento
 
     except TimeoutException:
-        logging.error(f"Timeout: elemento '{seletor}' não encontrado em {tempo_espera}s usando '{by}'.")
+        logging.error(f"Timeout: elemento '{seletor}' não encontrado em {tempo}s usando '{by}'.")
         raise SeleniumError(f"Timeout ao localizar o elemento '{seletor}' via '{by}'.")
 
     except NoSuchElementException:
@@ -95,24 +93,13 @@ def scroll_to_element(card, driver):
         raise SeleniumError(f"Erro ao aguardar o elemento '{card}': {ex}")
 
 
-def criar_driver(preferencias=None, tempo_download_driver=30):
+def criar_driver(preferencias=preferencia_de_navegadores):
     """
     Cria um WebDriver de acordo com a lista de preferencias.
     preferencias: lista com nomes de navegadores em ordem ex: ['chrome','edge','firefox']
-                  se None, usa ['chrome','edge','firefox'] (chrome tem prioridade).
-    tempo_download_driver: timeout para o webdriver_manager (avaliativo).
+
     Retorna: objeto driver (WebDriver) ou None se não conseguiu iniciar nenhum.
     """
-
-    # import local para evitar problemas se a estrutura mudar temporariamente
-    try:
-        from app.constantes import mostrar_tela_navegador
-    except Exception:
-        mostrar_tela_navegador = False
-        logging.warning("Variável mostrar_tela_navegador não encontrada em app.constantes. Usando False como padrão.")
-
-    if preferencias is None:
-        preferencias = ['chrome', 'edge', 'firefox']
 
     driver = None
 
@@ -197,7 +184,7 @@ def criar_driver(preferencias=None, tempo_download_driver=30):
             # continua para o próximo navegador da lista
 
     logging.critical("Não foi possível iniciar nenhum navegador. Verifique os drivers e dependências.")
-    return None
+    raise SeleniumError("Erro abrir o navegador.")
 
 
 def abrir_navegador():

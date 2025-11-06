@@ -14,3 +14,5 @@ pycache/
 
 *.py[cod]
 *$py.class
+
+*.xlsx

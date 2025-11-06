@@ -1,7 +1,7 @@
 from typing import List
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from app.constantes import quantidade_maxima_por_tipo, tentativas_maximas, nome_do_estabelecimento, tipo_do_estabelecimento, nota_do_estabelecimento, avaliacoes_do_estabelecimento, endereco_do_estabelecimento
+from app.constantes import quantidade_de_resultados, tentativas_maximas, nome_do_estabelecimento, tipo_do_estabelecimento, nota_do_estabelecimento, avaliacoes_do_estabelecimento, endereco_do_estabelecimento
 from infra.file_provider import gerar_arquivo_json, gerar_arquivo_excel
 from app.utils import get_elemento, scroll_to_element, abrir_navegador, navegar_para_url, fechar_navegador
 import logging
@@ -28,7 +28,7 @@ def buscar_informacoes(estabelecimento):
 
         pesquisar_por_estabelecimento_no_maps(driver, estabelecimento)
 
-        indices_cards = gerar_indices_cards(quantidade_maxima_por_tipo)
+        indices_cards = gerar_indices_cards(quantidade_de_resultados)
 
         for indice in indices_cards:
             try:
@@ -60,15 +60,6 @@ def buscar_informacoes(estabelecimento):
 
         gerar_arquivo_json(estabelecimento.lower(), resultados)
         gerar_arquivo_excel(estabelecimento.lower())
-        
-
-        #TODO: melhorar essa documentação dessa classe
-
-        #TODO: criar uma pasta de arquivos
-
-        #TODO: conferir as documentações e logs (se são uteis, se precisa adicionar e o nível do LOG)
-
-        #TODO: fazer o Readme
 
         #TODO: ver se utilizamos pythonPackge ou pastas (eu acho melhor pythonPackage, pastas seria para os arquivos)
 
