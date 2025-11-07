@@ -17,6 +17,9 @@ Atenção:
     - O uso centralizado garante consistência entre diferentes módulos (utils, use_case, logs, etc).
 
 Constantes principais:
+    url_google_maps (str):
+        URL base do Google Maps utilizada na automação.
+
     estabelecimentos (list[str]):
         Lista de tipos de locais que o robô pesquisará no Google Maps.
 
@@ -41,7 +44,7 @@ Constantes principais:
         Número de tentativas de repetição para inicializar o navegador ou executar ações críticas.
 
     preferencia_de_navegadores (list[str]):
-        Lista de navegadores para execucação do RPA.
+        Lista de navegadores para execução do RPA.
 
 Seletores XPath:
     Todos os seletores abaixo são utilizados pelo módulo `use_case.py` para identificar
@@ -49,27 +52,35 @@ Seletores XPath:
     Esses caminhos devem ser ajustados conforme a estrutura do DOM do Maps,
     caso o layout seja atualizado no futuro.
 
-    nome_do_estabelecimento (str):
+    xpath_nome_do_estabelecimento (str):
         XPath que identifica o título principal (nome) do estabelecimento aberto no painel lateral.
 
-    tipo_do_estabelecimento (str):
+    xpath_tipo_do_estabelecimento (str):
         XPath que localiza o tipo/categoria do estabelecimento (ex: academia, restaurante, etc).
 
-    nota_do_estabelecimento (str):
+    xpath_nota_do_estabelecimento (str):
         XPath que captura a nota de avaliação (ex: 4.8) exibida no painel.
 
-    avaliacoes_do_estabelecimento (str):
+    xpath_avaliacoes_do_estabelecimento (str):
         XPath que retorna o número de avaliações registradas pelos usuários.
 
-    endereco_do_estabelecimento (list[str]):
+    xpath_endereco_do_estabelecimento (list[str]):
         Lista de XPaths alternativos usados para capturar o endereço completo do estabelecimento
         no painel lateral do Google Maps.
 
-        Essa abordagem garante maior compatibilidade entre diferentes layouts de painéis —
+        Essa abordagem garante maior compatibilidade entre diferentes layouts de painéis — 
         como academias, restaurantes e sorveterias — que podem renderizar o endereço em posições
         distintas dentro do DOM. O robô tentará localizar o endereço utilizando os caminhos
         fornecidos, em ordem de prioridade, até encontrar o elemento válido.
+
+    xpath_botao_de_fechar_card (str):
+        XPath do botão de fechar o card do estabelecimento.
+
+    xpath_card_completo (str):
+        XPath do container principal que contém todas as informações visíveis do card.
 """
+
+url_google_maps = "https://www.google.com/maps"
 
 estabelecimentos = ["academias", "restaurantes", "sorveterias"]
 
@@ -91,16 +102,20 @@ preferencia_de_navegadores = ['chrome', 'edge', 'firefox']
 # Caminhos (XPath) dos elementos
 # ----------------------------
 
-nome_do_estabelecimento = '//*[@id="QA0Szd"]/div/div/div[1]/div[3]/div/div[1]/div/div/div[2]/div[2]/div/div[1]/div[1]/h1'
+xpath_nome_do_estabelecimento = '//*[@id="QA0Szd"]/div/div/div[1]/div[3]/div/div[1]/div/div/div[2]/div[2]/div/div[1]/div[1]/h1'
 
-tipo_do_estabelecimento = '//*[@id="QA0Szd"]/div/div/div[1]/div[3]/div/div[1]/div/div/div[2]/div[2]/div/div[1]/div[2]/div/div[2]/span[1]/span/button'
+xpath_tipo_do_estabelecimento = '//*[@id="QA0Szd"]/div/div/div[1]/div[3]/div/div[1]/div/div/div[2]/div[2]/div/div[1]/div[2]/div/div[2]/span[1]/span/button'
 
-nota_do_estabelecimento = '//*[@id="QA0Szd"]/div/div/div[1]/div[3]/div/div[1]/div/div/div[2]/div[2]/div/div[1]/div[2]/div/div[1]/div[2]/span[1]/span[1]'
+xpath_nota_do_estabelecimento = '//*[@id="QA0Szd"]/div/div/div[1]/div[3]/div/div[1]/div/div/div[2]/div[2]/div/div[1]/div[2]/div/div[1]/div[2]/span[1]/span[1]'
 
-avaliacoes_do_estabelecimento = '//*[@id="QA0Szd"]/div/div/div[1]/div[3]/div/div[1]/div/div/div[2]/div[2]/div/div[1]/div[2]/div/div[1]/div[2]/span[2]/span/span'
+xpath_avaliacoes_do_estabelecimento = '//*[@id="QA0Szd"]/div/div/div[1]/div[3]/div/div[1]/div/div/div[2]/div[2]/div/div[1]/div[2]/div/div[1]/div[2]/span[2]/span/span'
 
-endereco_do_estabelecimento = [
+xpath_endereco_do_estabelecimento = [
     '//*[@id="QA0Szd"]/div/div/div[1]/div[3]/div/div[1]/div/div/div[2]/div[7]/div[3]/button/div/div[2]/div[1]',
     '//*[@id="QA0Szd"]/div/div/div[1]/div[3]/div/div[1]/div/div/div[2]/div[9]/div[3]/button/div/div[2]/div[1]',
     '//*[@id="QA0Szd"]/div/div/div[1]/div[3]/div/div[1]/div/div/div[2]/div[11]/div[3]/button/div/div[2]/div[1]'
 ]
+
+xpath_botao_de_fechar_card = '//*[@id="QA0Szd"]/div/div/div[1]/div[3]/div/div[1]/div/div/div[1]/div/div/div[3]/span/button'
+
+xpath_card_completo = '//*[@id="QA0Szd"]/div/div/div[1]/div[3]/div/div[1]/div/div/div[2]'

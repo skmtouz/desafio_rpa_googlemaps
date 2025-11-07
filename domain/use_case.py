@@ -1,7 +1,7 @@
 from typing import List
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from app.constantes import quantidade_de_resultados, tentativas_maximas, nome_do_estabelecimento, tipo_do_estabelecimento, nota_do_estabelecimento, avaliacoes_do_estabelecimento, endereco_do_estabelecimento
+from app.constantes import quantidade_de_resultados, tentativas_maximas, xpath_nome_do_estabelecimento, xpath_tipo_do_estabelecimento, xpath_nota_do_estabelecimento, xpath_avaliacoes_do_estabelecimento, xpath_endereco_do_estabelecimento, xpath_botao_de_fechar_card, xpath_card_completo, url_google_maps
 from infra.file_provider import gerar_arquivo_json, gerar_arquivo_excel
 from app.utils import get_elemento, scroll_to_element, abrir_navegador, navegar_para_url, fechar_navegador
 import logging
@@ -24,7 +24,7 @@ def buscar_informacoes(estabelecimento):
     driver = abrir_navegador()
 
     try:
-        navegar_para_url(driver, "https://www.google.com/maps")
+        navegar_para_url(driver, url_google_maps)
 
         pesquisar_por_estabelecimento_no_maps(driver, estabelecimento)
 
@@ -61,8 +61,6 @@ def buscar_informacoes(estabelecimento):
         gerar_arquivo_json(estabelecimento.lower(), resultados)
         gerar_arquivo_excel(estabelecimento.lower())
 
-        #TODO: ver se utilizamos pythonPackge ou pastas (eu acho melhor pythonPackage, pastas seria para os arquivos)
-
     except Exception as erro:
         logging.critical(f"Erro inesperado: {erro}")
 
@@ -81,8 +79,7 @@ def fechar_card_de_estabelecimento(driver, indice):
         indice (int): Índice do card atualmente aberto, usado apenas para fins de log e rastreamento.
     """
     logging.debug(f"Fechando o card com indice: #{indice}.")
-    botao_de_fechar_card = get_elemento(driver, By.XPATH,
-                                        '//*[@id="QA0Szd"]/div/div/div[1]/div[3]/div/div[1]/div/div/div[1]/div/div/div[3]/span/button')
+    botao_de_fechar_card = get_elemento(driver, By.XPATH, xpath_botao_de_fechar_card)
 
     botao_de_fechar_card.click()
     logging.debug(f"Card do estabelecimento #{indice} fechado com sucesso.")
@@ -112,20 +109,20 @@ def extrair_dados_do_card_de_estabelecimento(driver, indice):
     logging.debug(f"Iniciando extração dos dados do estabelecimento com índice #{indice}.")
 
     logging.debug(f"recuperando nome do estabelecimento com indice: #{indice}.")
-    nome = get_elemento(driver, By.XPATH, nome_do_estabelecimento).text.strip()
+    nome = get_elemento(driver, By.XPATH, xpath_nome_do_estabelecimento).text.strip()
 
     logging.debug(f"recuperando tipo do estabelecimento com indice: #{indice}.")
-    tipo = get_elemento(driver, By.XPATH, tipo_do_estabelecimento).text.strip()
+    tipo = get_elemento(driver, By.XPATH, xpath_tipo_do_estabelecimento).text.strip()
 
     logging.debug(f"recuperando nota do estabelecimento com indice: #{indice}.")
-    nota = get_elemento(driver, By.XPATH, nota_do_estabelecimento).text.strip()
+    nota = get_elemento(driver, By.XPATH, xpath_nota_do_estabelecimento).text.strip()
 
     logging.debug(f"recuperando avaliações do estabelecimento com indice: #{indice}.")
-    avaliacoes = get_elemento(driver, By.XPATH, avaliacoes_do_estabelecimento).text.strip()
+    avaliacoes = get_elemento(driver, By.XPATH, xpath_avaliacoes_do_estabelecimento).text.strip()
 
     logging.debug(f"recuperando endereço do estabelecimento com indice: #{indice}.")
     endereco = ""
-    for xpath in endereco_do_estabelecimento:
+    for xpath in xpath_endereco_do_estabelecimento:
         try:
             elemento = get_elemento(driver, By.XPATH, xpath, tempo=1)
             endereco = elemento.text.strip()
@@ -183,7 +180,7 @@ def selecionar_card_de_estabelecimento(driver, indice):
 
             logging.debug(f"Card #{indice} clicado com sucesso. Validando abertura...")
 
-            get_elemento(driver, By.XPATH, '//*[@id="QA0Szd"]/div/div/div[1]/div[3]/div/div[1]/div/div/div[2]')
+            get_elemento(driver, By.XPATH, xpath_card_completo)
 
             logging.debug(f"Card #{indice} aberto e validado com sucesso na tentativa {tentativa}.")
 

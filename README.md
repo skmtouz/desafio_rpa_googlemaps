@@ -112,13 +112,13 @@ desafio_rpa_googlemaps/
 │  ├─ exceptions.py
 │  ├─ logs.py
 │  └─ utils.py
+├─ arquivos_gerados/          # Pasta reservada para disponibilização de arquivos
 ├─ domain/                    # Pacote reservado para todos os casos de usos necessários da aplicação
 │  └─ use_case.py
 ├─ infra/                     # Pacote reservada do para todas as comunicações com a infraestrutura da aplicação
 │  └─ file_provider.py
 ├─ main.py
-├─ README.md
-└─ arquivos_gerados/          # Pasta reservada para disponibilização de arquivos
+└─ README.md
 ```
 
 ---

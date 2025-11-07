@@ -4,8 +4,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from app.constantes import tempo_maximo_espera_por_elemento, tentativas_maximas, preferencia_de_navegadores, mostrar_tela_navegador
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service as ChromeService
-from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.microsoft import EdgeChromiumDriverManager
 from webdriver_manager.firefox import GeckoDriverManager
 from app.exceptions import SeleniumError
@@ -120,13 +118,7 @@ def criar_driver(preferencias=preferencia_de_navegadores):
                 opcoes.add_argument("--no-default-browser-check")
                 opcoes.add_argument("about:blank")
 
-                service = ChromeService(ChromeDriverManager().install())
-
-                try:
-                    driver = webdriver.Chrome(service=service, options=opcoes)
-                except TypeError:
-                    # fallback em caso de incompatibilidade do Service construction
-                    driver = webdriver.Chrome(ChromeDriverManager().install(), options=opcoes)
+                driver = webdriver.Chrome(options=opcoes)
 
             # === MICROSOFT EDGE ===
             elif navegador == 'edge':
