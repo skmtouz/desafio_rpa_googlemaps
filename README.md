@@ -31,8 +31,14 @@ cd desafio_rpa_googlemaps
 ```bash
 python -m venv venv
 # Windows PowerShell
+Set-ExecutionPolicy Bypass -Scope Process -Force
 .\venv\Scripts\Activate.ps1
-# (ou em bash: source venv/bin/activate)
+
+# Windows (CMD)
+venv\Scripts\activate.bat
+
+# Git Bash
+source venv/bin/activate
 ```
 
 **3. Instalar dependências**
