@@ -88,7 +88,7 @@ caminho_arquivos = "arquivos_gerados/"
 
 nome_arquivo_de_log = "automação.log"
 
-quantidade_de_resultados = 5
+quantidade_de_resultados = 30
 
 mostrar_tela_navegador = True
 
